@@ -41,9 +41,10 @@ public class MainActivity extends AppCompatActivity {
                     for(int i=0;i<globwealist.size();i++)
                     {
                         String tianqi = (String)globwealist.get(0);
-                        String wendu = (String)globwealist.get(1);
-                        String fengli = (String)globwealist.get(2);
-                        weartxt.setText("今天： "+tianqi+"    "+wendu+"    "+"   "+fengli);
+                        String zuidiwendu = (String)globwealist.get(1);
+                        String zuigaowendu = (String)globwealist.get(2);
+                        String fengli = (String)globwealist.get(3);
+                        weartxt.setText("今天： "+tianqi+"    "+zuigaowendu+"/"+zuidiwendu+"    "+"   "+fengli);
 
                     }
                 }
@@ -100,13 +101,18 @@ class Weather
        //String tianqi = (doc.select("p.wea")).attr("title");
        //直接得到第一个元素的值
        String tianqi = (doc.select("p.wea")).eq(0).text();
-       //温度
-       String wendu = doc.select("p.tem > i").eq(0).text();
+       /*温度
+       * 最高温度
+       * 最低温度
+       * */
+       String zuidiwendu = doc.select("p.tem > i").eq(0).text();
+       String  zuigaowendu = doc.select("p.tem > span").eq(0).text();
        //风力
        String fengli = doc.select("p.win > i").eq(0).text();
-       ArrayList<String> lis = new ArrayList<String>();
+       ArrayList<String> lis = new ArrayList();
        lis.add(tianqi);
-       lis.add(wendu);
+       lis.add(zuidiwendu);
+       lis.add(zuigaowendu);
        lis.add(fengli);
        return lis;
    }
