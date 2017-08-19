@@ -20,38 +20,52 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     ArrayList globwealist;
     TextView weartxt;
+    ListView newPaperls;
+    ArrayAdapter<String> newpaperlistAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         final Weather weather = new Weather();
+        final Newpaper newpaper = new Newpaper();
         weartxt = (TextView)findViewById(R.id.weatxt);
+        newPaperls = (ListView)findViewById(R.id.list1);
 
         final Handler mHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if(msg.what == 0x111)
+                switch (msg.what)
                 {
-                    for(int i=0;i<globwealist.size();i++)
-                    {
-                        String tianqi = (String)globwealist.get(0);
-                        String zuidiwendu = (String)globwealist.get(1);
-                        String zuigaowendu = (String)globwealist.get(2);
-                        String fengli = (String)globwealist.get(3);
-                        weartxt.setText("今天： "+tianqi+"    "+zuigaowendu+"/"+zuidiwendu+"    "+"   "+fengli);
-
+                    case 0x111: {
+                        for (int i = 0; i < globwealist.size(); i++) {
+                            String tianqi = (String) globwealist.get(0);
+                            String zuidiwendu = (String) globwealist.get(1);
+                            String zuigaowendu = (String) globwealist.get(2);
+                            String fengli = (String) globwealist.get(3);
+                            weartxt.setText("今天： " + tianqi + "    " + zuigaowendu + "/" + zuidiwendu + "    " + "   " + fengli);
+                        }
                     }
+                    break;
+
+                    case 0x222:
+                    {
+                        newPaperls.setAdapter(newpaperlistAdapter);
+                    }
+                    break;
                 }
 
             }
         };
 
+        //天气更新线程
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -65,26 +79,48 @@ public class MainActivity extends AppCompatActivity {
             }
         },1200);
 
+        //新闻更新线程
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+               newpaperlistAdapter =  newpaper.getNewpaper();
+                mHandler.sendEmptyMessage(0x222);
+            }
+        },1300);
 
+    }
+
+
+
+    /*
+* 新闻列表获取
+* */
+    class Newpaper
+    {
+        public ArrayAdapter<String> getNewpaper()
+        {
+            String[] newPaper = new String[14];
+            Document doc = null;
+            try {
+                doc = Jsoup.connect("http://scemi.com/").get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Elements newPaperdata = (doc.select("div.list_con"));
+            for(int i =0;i<newPaperdata.size();i++)
+            {
+                //System.out.println(newPaperdata.eq(i).text());
+                newPaper[i] = newPaperdata.eq(i).text();
+            }
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_dropdown_item_1line,newPaper);
+            return arrayAdapter;
+        }
 
     }
 
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -117,3 +153,7 @@ class Weather
        return lis;
    }
 }
+
+
+
+
