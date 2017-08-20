@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">机电通</string>
     <string name="top_lable">加载中.........</string>
+    <string name="title_home">首页</string>
+    <string name="kaozheng">录取考证查询</string>
+    <string name="Mypager">我的</string>
 </resources>

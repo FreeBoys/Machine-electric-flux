@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.app.Activity;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -24,7 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     ArrayList globwealist;
     TextView weartxt;
     ListView newPaperls;
@@ -83,8 +84,14 @@ public class MainActivity extends AppCompatActivity {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-               newpaperlistAdapter =  newpaper.getNewpaper();
-                mHandler.sendEmptyMessage(0x222);
+                try {
+                    newpaperlistAdapter = newpaper.getNewpaper();
+                    mHandler.sendEmptyMessage(0x222);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         },1300);
 
