@@ -98,18 +98,19 @@ public class MainActivity extends Activity {
     }
 
 
-
     /*
 * 新闻列表获取
 * */
     class Newpaper
     {
+        Document doc = null;
+        String url = "http://scemi.com/";
         public ArrayAdapter<String> getNewpaper()
         {
             String[] newPaper = new String[14];
-            Document doc = null;
+
             try {
-                doc = Jsoup.connect("http://scemi.com/").get();
+                doc = Jsoup.connect(url).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -119,8 +120,19 @@ public class MainActivity extends Activity {
                 //System.out.println(newPaperdata.eq(i).text());
                 newPaper[i] = newPaperdata.eq(i).text();
             }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_dropdown_item_1line,newPaper);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
+                    (MainActivity.this,android.R.layout.simple_dropdown_item_1line,newPaper);
             return arrayAdapter;
+        }
+
+        //获取新闻URL
+        public void getNewpaperHref()
+        {
+            Elements links = (doc.select("div.list_con>a[href]"));
+            for (Element link : links) {
+                String URL = link.attr("abs:href");
+                System.out.println(URL);
+            }
         }
 
     }
