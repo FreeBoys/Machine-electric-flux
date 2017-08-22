@@ -13,6 +13,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -21,14 +22,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity
+{
     ArrayList globwealist;
     TextView weartxt;
     ListView newPaperls;
+    String[] URLS = new String[14];
     ArrayAdapter<String> newpaperlistAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,94 @@ public class MainActivity extends Activity {
         final Newpaper newpaper = new Newpaper();
         weartxt = (TextView)findViewById(R.id.weatxt);
         newPaperls = (ListView)findViewById(R.id.list1);
+
+
+        //list监听
+        newPaperls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+               // Log.i("TAG",i+"");
+                switch(i){
+                    case 0:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 1:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 2:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 3:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 4:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 5:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 6:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 7:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 8:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 9:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 10:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 11:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 12:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 13:
+                    {
+                        openWebview(URLS[i]);
+                    }
+                    break;
+                    case 14:
+                    {
+                        openWebview("http://scemi.com/xwzx/xyyw.htm");
+                    }
+                }
+            }
+
+
+        });
+
 
         final Handler mHandler = new Handler(){
             @Override
@@ -51,7 +143,7 @@ public class MainActivity extends Activity {
                             String zuidiwendu = (String) globwealist.get(1);
                             String zuigaowendu = (String) globwealist.get(2);
                             String fengli = (String) globwealist.get(3);
-                            weartxt.setText("今天： " + tianqi + "    " + zuigaowendu + "/" + zuidiwendu + "    " + "   " + fengli);
+                            weartxt.setText("今天： " + tianqi + "    " + zuigaowendu + "~" + zuidiwendu + "    " + "   " + fengli);
                         }
                     }
                     break;
@@ -78,7 +170,7 @@ public class MainActivity extends Activity {
                     e.printStackTrace();
                 }
             }
-        },1200);
+        },500);
 
         //新闻更新线程
         new Timer().schedule(new TimerTask() {
@@ -93,9 +185,29 @@ public class MainActivity extends Activity {
                     e.printStackTrace();
                 }
             }
-        },1300);
+        },500);
+
+        //新闻路径更新线程
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                URLS = newpaper.getNewpaperHref();
+            }
+        },1000);
 
     }
+
+      /*
+        *
+        * 开启webviewActivity
+        *
+        * */
+        public void openWebview(String URL)
+        {
+            Intent intent = new Intent(MainActivity.this,Webview.class);
+            intent.putExtra("URL_String",URL);
+            startActivity(intent);
+        }
 
 
     /*
@@ -103,11 +215,12 @@ public class MainActivity extends Activity {
 * */
     class Newpaper
     {
-        Document doc = null;
+        Document doc;
         String url = "http://scemi.com/";
         public ArrayAdapter<String> getNewpaper()
         {
-            String[] newPaper = new String[14];
+            int i =0;
+            String[] newPaper = new String[15];
 
             try {
                 doc = Jsoup.connect(url).get();
@@ -115,24 +228,35 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
             Elements newPaperdata = (doc.select("div.list_con"));
-            for(int i =0;i<newPaperdata.size();i++)
+            for(;i<newPaperdata.size();i++)
             {
                 //System.out.println(newPaperdata.eq(i).text());
                 newPaper[i] = newPaperdata.eq(i).text();
             }
+            newPaper[14] = "更多新闻>>>>>>";
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
                     (MainActivity.this,android.R.layout.simple_dropdown_item_1line,newPaper);
+            //System.out.println(newPaper[14]);
             return arrayAdapter;
         }
 
         //获取新闻URL
-        public void getNewpaperHref()
+        public String[] getNewpaperHref()
         {
+            String[] URLs = new String[14];
+            int i = 0;
+            try {
+                doc = Jsoup.connect(url).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Elements links = (doc.select("div.list_con>a[href]"));
             for (Element link : links) {
-                String URL = link.attr("abs:href");
-                System.out.println(URL);
+                URLs[i] = link.attr("abs:href");
+                i++;
+                //System.out.println(URL);
             }
+            return URLs;
         }
 
     }
@@ -142,10 +266,7 @@ public class MainActivity extends Activity {
 }
 
 
-
-
-
-
+//天气获取类
 class Weather
 {
    public ArrayList getWeather() throws Exception

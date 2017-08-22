@@ -8,6 +8,7 @@ package com.example.egg.jidiantong;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,11 +20,17 @@ import android.webkit.WebViewClient;
 
 public class Webview extends Activity {
     private WebView web1;
-    private String url="http://scemi.com/";
+    //private String url="http://scemi.com/";
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //获取Intent传来的URL
+        Intent intent = getIntent();
+        url = intent.getStringExtra("URL_String");
+
+
         setContentView(R.layout.webview);
         web1 = (WebView)findViewById(R.id.we1);
         web1.loadUrl(url);
